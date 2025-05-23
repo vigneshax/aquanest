@@ -98,7 +98,9 @@ export default function ProductCard({ product, variant = "teal" }: ProductCardPr
             <span className="ml-auto text-sm text-gray-500">{product.category}</span>
           </div>
           <h3 className="font-medium text-gray-900 group-hover:text-primary-600 line-clamp-1">{product.name}</h3>
-          <p className="mt-1 text-sm text-gray-500 line-clamp-2">{product.description}</p>
+          <p className="mt-1 text-sm text-gray-500 line-clamp-2 hidden md:block">
+            {product.description}
+          </p>
           <div className="mt-3 flex items-center justify-between">
             <p className="font-medium text-gray-900">₹{product.price.toFixed(2)}</p>
             <Button

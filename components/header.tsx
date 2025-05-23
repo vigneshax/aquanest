@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Menu, X, ShoppingCart, User, Fish, Bird, Dog } from "lucide-react"
+import { Menu, X, ShoppingCart, User, Fish, Bird, Dog, Bell } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useCartStore } from "@/lib/cart-store"
 import { useUserStore } from "@/lib/user-store"
@@ -16,10 +16,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Badge } from "@/components/ui/badge"
+import { getUnreadNotificationsCount } from "@/lib/notifications"
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [notificationsCount, setNotificationsCount] = useState(0)
   const pathname = usePathname()
   const { getTotalItems } = useCartStore()
   const { user, signOut } = useUserStore()
@@ -39,8 +41,24 @@ export default function Header() {
     setIsMenuOpen(false)
   }, [pathname])
 
+  // Fetch notifications count
+  useEffect(() => {
+    if (user) {
+      const fetchNotificationsCount = async () => {
+        const { count } = await getUnreadNotificationsCount(user.id)
+        setNotificationsCount(count)
+      }
+
+      fetchNotificationsCount()
+
+      // Set up interval to check for new notifications
+      const interval = setInterval(fetchNotificationsCount, 60000) // Check every minute
+      return () => clearInterval(interval)
+    }
+  }, [user])
+
   return (
-    <header className={`sticky top-0 z-50 w-full transition-all duration-500 ${isScrolled ? "py-1" : "py-1"}`}>
+    <header className={`sticky top-0 z-50 w-full transition-all duration-500 ${isScrolled ? "py-2" : "py-3"}`}>
       <div className="container mx-auto px-4">
       <div
         className={`rounded-full transition-all duration-500 ${
@@ -80,12 +98,25 @@ export default function Header() {
           </nav>
 
           <div className="flex items-center space-x-4">
+            {user && (
+              <Link href="/notifications" className="relative">
+                <Button variant="ghost" size="icon" className="relative">
+                  <Bell className="h-5 w-5" />
+                  {notificationsCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary-500">
+                      {notificationsCount > 9 ? "9+" : notificationsCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            )}
+
             <Link href="/cart" className="relative">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
                 {getTotalItems() > 0 && (
                   <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 bg-primary-500">
-                    {getTotalItems()}
+                    {getTotalItems() > 9 ? "9+" : getTotalItems()}
                   </Badge>
                 )}
               </Button>
@@ -106,6 +137,9 @@ export default function Header() {
                   </DropdownMenuItem>
                   <DropdownMenuItem asChild>
                     <Link href="/orders">Orders</Link>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem asChild>
+                    <Link href="/notifications">Notifications</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem onClick={() => signOut()}>Logout</DropdownMenuItem>

@@ -36,11 +36,8 @@ export default function CartPage() {
 
     setIsProcessing(true)
 
-    // Simulate checkout process
-    setTimeout(() => {
-      setIsProcessing(false)
-      // Redirect to checkout page
-    }, 1500)
+    // Redirect to checkout page
+    window.location.href = "/checkout"
   }
 
   if (items.length === 0) {
@@ -159,15 +156,32 @@ export default function CartPage() {
               </div>
             </div>
 
-            <Button className="w-full" size="lg" onClick={handleCheckout} disabled={isProcessing}>
-              {isProcessing ? "Processing..." : "Proceed to Checkout"}
-              {!isProcessing && <ArrowRight className="ml-2 h-4 w-4" />}
+            <Button
+              className="w-full"
+              size="lg"
+              onClick={handleCheckout}
+              disabled={isProcessing}
+              asChild={!isProcessing && user ? true : false}
+            >
+              {isProcessing ? (
+                "Processing..."
+              ) : user ? (
+                <Link href="/checkout">
+                  Proceed to Checkout
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </Link>
+              ) : (
+                <>
+                  Proceed to Checkout
+                  <ArrowRight className="ml-2 h-4 w-4" />
+                </>
+              )}
             </Button>
 
             {!user && (
               <p className="text-sm text-gray-500 mt-4 text-center">
                 Please{" "}
-                <Link href="/login" className="text-primary-500 hover:underline">
+                <Link href="/login?redirect=/checkout" className="text-primary-500 hover:underline">
                   login
                 </Link>{" "}
                 to complete your purchase
