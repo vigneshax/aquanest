@@ -9,11 +9,11 @@ type Params = {
 };
 
 type PageProps = {
-  params: Params;
+  params: Promise<Params>;
 };
 
 export default async function ProductPage({ params }: PageProps) {
-  const { id } = params;
+  const { id } = await params
 
   const supabase = createServerSupabaseClient();
 
