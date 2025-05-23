@@ -16,7 +16,7 @@ export default function HeroSection() {
       subtitle: "Discover the perfect companions for your aquarium",
       description:
         "Explore our wide range of fish species, aquatic plants, and essential supplies for a thriving underwater ecosystem.",
-      image: "/placeholder.svg?height=600&width=800",
+      image: "https://img.freepik.com/free-photo/beautiful-exotic-colorful-fish_23-2150737617.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740",
       color: "from-primary-500 to-primary-600",
       icon: <Fish className="h-8 w-8" />,
       link: "/products/fish",
@@ -26,7 +26,7 @@ export default function HeroSection() {
       subtitle: "Beautiful birds and premium supplies",
       description:
         "Find the perfect avian companion along with cages, toys, and nutritious food to keep your birds happy and healthy.",
-      image: "/placeholder.svg?height=600&width=800",
+      image: "https://img.freepik.com/free-photo/animal-perching-branch-surrounded-by-cherry-blossoms-spring-generated-by-artificial-intelligence_188544-128336.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740",
       color: "from-primary-500 to-primary-600",
       icon: <Bird className="h-8 w-8" />,
       link: "/products/birds",
@@ -35,7 +35,7 @@ export default function HeroSection() {
       title: "Canine Companions",
       subtitle: "Everything your dog needs to thrive",
       description: "Shop premium dog food, toys, accessories, and grooming supplies for your loyal four-legged friend.",
-      image: "/placeholder.svg?height=600&width=800",
+      image: "https://img.freepik.com/free-photo/portrait-adorable-child-with-their-dog-field_23-2151025353.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&w=740",
       color: "from-primary-500 to-primary-600",
       icon: <Dog className="h-8 w-8" />,
       link: "/products/dogs",
@@ -176,15 +176,28 @@ export default function HeroSection() {
       </div>
 
       {/* Wave divider - fixed to be right-side up */}
-      <div className="absolute bottom-0 left-0 w-full overflow-hidden">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" className="w-full">
-          <path
-            fill="#ffffff"
-            fillOpacity="1"
-            d="M0,96L48,112C96,128,192,160,288,186.7C384,213,480,235,576,224C672,213,768,171,864,165.3C960,160,1056,192,1152,197.3C1248,203,1344,181,1392,170.7L1440,160L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-          ></path>
-        </svg>
-      </div>
+    <div className="relative">
+  {/* Your hero content here */}
+
+  {/* Upside-down wave at bottom */}
+  <div className="absolute bottom-0 left-0 right-0 overflow-hidden leading-none rotate-180">
+    <svg
+      className="w-full h-[100px]"
+      data-name="Layer 1"
+      xmlns="http://www.w3.org/2000/svg"
+      viewBox="0 0 1200 120"
+      preserveAspectRatio="none"
+    >
+      <path
+        d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39
+        C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35
+        A600.21,600.21,0,0,0,321.39,56.44Z"
+        className="fill-[#7dd3fc]"
+      />
+    </svg>
+  </div>
+</div>
     </div>
+
   )
 }

@@ -20,7 +20,7 @@ export default function Home() {
             <CategoryCard
               title="Fish & Aquatics"
               description="Discover a wide range of fish species, aquariums, and essential supplies for your underwater friends."
-              image="/placeholder.svg?height=400&width=600"
+              image="https://img.freepik.com/free-photo/close-up-vibrant-clown-fish-swimming-coral-reef-generated-by-ai_188544-151620.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740"
               href="/products/fish"
               color="teal"
               icon={<Fish className="h-6 w-6 text-white" />}
@@ -28,7 +28,7 @@ export default function Home() {
             <CategoryCard
               title="Birds & Accessories"
               description="Find beautiful birds, cages, toys, and nutritious food to keep your feathered friends happy."
-              image="/placeholder.svg?height=400&width=600"
+              image="https://img.freepik.com/free-photo/beautiful-tropical-colorful-bird_23-2151875489.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740"
               href="/products/birds"
               color="orange"
               icon={<Bird className="h-6 w-6 text-white" />}
@@ -36,7 +36,7 @@ export default function Home() {
             <CategoryCard
               title="Dogs & Supplies"
               description="Shop premium dog food, toys, accessories, and grooming supplies for your loyal companion."
-              image="/placeholder.svg?height=400&width=600"
+              image="https://img.freepik.com/free-photo/beautiful-autumn-lifestyle_23-2151867759.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740"
               href="/products/dogs"
               color="purple"
               icon={<Dog className="h-6 w-6 text-white" />}
@@ -51,6 +51,19 @@ export default function Home() {
         title="Featured Fish Products"
         description="Explore our top-rated fish food, aquariums, and accessories to create the perfect underwater environment."
         variant="teal"
+      />
+      <FeaturedProducts
+        category="birds"
+        title="Popular Bird Supplies"
+        description="Discover premium bird food, toys, and accessories that your feathered friends will love."
+        variant="orange"
+      />
+
+      <FeaturedProducts
+        category="dogs"
+        title="Best Dog Products"
+        description="Shop our selection of high-quality dog food, toys, and accessories for your canine companion."
+        variant="purple"
       />
 
       {/* About Us Section */}
