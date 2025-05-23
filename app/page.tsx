@@ -3,6 +3,8 @@ import CategoryCard from "@/components/category-card"
 import FeaturedProducts from "@/components/featured-products"
 import NewsletterSection from "@/components/newsletter-section"
 import TestimonialsSection from "@/components/testimonials-section"
+import AboutSection from "@/components/about-section"
+import ContactSection from "@/components/contact-section"
 import { Fish, Bird, Dog } from "lucide-react"
 
 export default function Home() {
@@ -18,7 +20,7 @@ export default function Home() {
             <CategoryCard
               title="Fish & Aquatics"
               description="Discover a wide range of fish species, aquariums, and essential supplies for your underwater friends."
-              image="https://img.freepik.com/free-photo/close-up-vibrant-clown-fish-swimming-coral-reef-generated-by-ai_188544-151620.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740"
+              image="/placeholder.svg?height=400&width=600"
               href="/products/fish"
               color="teal"
               icon={<Fish className="h-6 w-6 text-white" />}
@@ -26,7 +28,7 @@ export default function Home() {
             <CategoryCard
               title="Birds & Accessories"
               description="Find beautiful birds, cages, toys, and nutritious food to keep your feathered friends happy."
-              image="https://img.freepik.com/free-photo/beautiful-tropical-colorful-bird_23-2151875489.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740"
+              image="/placeholder.svg?height=400&width=600"
               href="/products/birds"
               color="orange"
               icon={<Bird className="h-6 w-6 text-white" />}
@@ -34,7 +36,7 @@ export default function Home() {
             <CategoryCard
               title="Dogs & Supplies"
               description="Shop premium dog food, toys, accessories, and grooming supplies for your loyal companion."
-              image="https://img.freepik.com/free-photo/beautiful-autumn-lifestyle_23-2151867759.jpg?uid=R56299312&ga=GA1.1.120496150.1741877174&semt=ais_hybrid&w=740"
+              image="/placeholder.svg?height=400&width=600"
               href="/products/dogs"
               color="purple"
               icon={<Dog className="h-6 w-6 text-white" />}
@@ -43,7 +45,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Featured Products Sections */}
+      {/* Featured Products Section */}
       <FeaturedProducts
         category="fish"
         title="Featured Fish Products"
@@ -51,22 +53,16 @@ export default function Home() {
         variant="teal"
       />
 
-      <FeaturedProducts
-        category="birds"
-        title="Popular Bird Supplies"
-        description="Discover premium bird food, toys, and accessories that your feathered friends will love."
-        variant="orange"
-      />
+      {/* About Us Section */}
+      <AboutSection />
 
-      <FeaturedProducts
-        category="dogs"
-        title="Best Dog Products"
-        description="Shop our selection of high-quality dog food, toys, and accessories for your canine companion."
-        variant="purple"
-      />
-
+      {/* Testimonials Section */}
       <TestimonialsSection />
 
+      {/* Contact Us Section */}
+      <ContactSection />
+
+      {/* Newsletter Section */}
       <NewsletterSection />
     </div>
   )

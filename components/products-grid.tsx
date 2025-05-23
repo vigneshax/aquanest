@@ -6,7 +6,8 @@ import ProductCard from "@/components/product-card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Search, SlidersHorizontal } from "lucide-react"
+import { Search, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react"
+import { Pagination } from "@/components/ui/pagination"
 
 interface ProductsGridProps {
   category: string
@@ -18,6 +19,10 @@ export default function ProductsGrid({ category, variant = "teal" }: ProductsGri
   const [searchTerm, setSearchTerm] = useState("")
   const [sortBy, setSortBy] = useState("featured")
   const [showFilters, setShowFilters] = useState(false)
+
+  // Pagination
+  const [currentPage, setCurrentPage] = useState(1)
+  const productsPerPage = 8
 
   // Filter and sort products
   const filteredProducts =
@@ -40,11 +45,23 @@ export default function ProductsGrid({ category, variant = "teal" }: ProductsGri
         }
       }) || []
 
+  // Calculate pagination
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage)
+  const indexOfLastProduct = currentPage * productsPerPage
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct)
+
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber)
+    // Scroll to top when changing page
+    window.scrollTo({ top: 0, behavior: "smooth" })
+  }
+
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
         {Array.from({ length: 8 }).map((_, i) => (
-          <div key={i} className="rounded-lg bg-gray-100 animate-pulse h-[300px]"></div>
+          <div key={i} className="rounded-lg bg-gray-100 animate-pulse h-[200px] sm:h-[300px]"></div>
         ))}
       </div>
     )
@@ -94,11 +111,52 @@ export default function ProductsGrid({ category, variant = "teal" }: ProductsGri
           <p className="text-gray-500">No products found</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} variant={variant} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+            {currentProducts.map((product) => (
+              <ProductCard key={product.id} product={product} variant={variant} />
+            ))}
+          </div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <div className="flex justify-center mt-8">
+              <Pagination>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => paginate(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                  className="mr-2"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <div className="flex items-center">
+                  {Array.from({ length: totalPages }, (_, i) => (
+                    <Button
+                      key={i}
+                      variant={currentPage === i + 1 ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => paginate(i + 1)}
+                      className="mx-1 min-w-[2rem]"
+                    >
+                      {i + 1}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => paginate(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                  className="ml-2"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </Pagination>
+            </div>
+          )}
+        </>
       )}
     </div>
   )

@@ -18,7 +18,7 @@ export const useProducts = (category?: string) => {
     queryFn: async () => {
       let query = supabase.from("products").select("*")
 
-      if (category) {
+      if (category && category !== "") {
         query = query.eq("category", category)
       }
 

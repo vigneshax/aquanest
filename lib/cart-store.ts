@@ -1,6 +1,8 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import { supabase } from "@/lib/supabase"
+import { toast } from "sonner"
+import { useUserStore } from "./user-store"
 
 export type CartItem = {
   id: number
@@ -31,8 +33,8 @@ export const useCartStore = create<CartStore>()(
 
       addItem: async (item) => {
         set({ isLoading: true })
-        const { user } = await supabase.auth.getUser()
-        const userId = user?.data?.user?.id
+        const user = useUserStore.getState().user
+        if (!user) return
 
         // Check if item already exists in cart
         const existingItem = get().items.find((i) => i.product_id === item.product_id)
@@ -44,31 +46,37 @@ export const useCartStore = create<CartStore>()(
           return
         }
 
-        if (userId) {
-          // Add to database if user is logged in
-          const { data, error } = await supabase
-            .from("cart_items")
-            .insert({
-              user_id: userId,
-              product_id: item.product_id,
-              name: item.name,
-              price: item.price,
-              quantity: item.quantity,
-              image: item.image,
-            })
-            .select("*")
-            .single()
+        if (user.id) {
+          try {
+            // Add to database if user is logged in
+            const { data, error } = await supabase
+              .from("cart_items")
+              .insert({
+                user_id: user.id,
+                product_id: item.product_id,
+                name: item.name,
+                price: item.price,
+                quantity: item.quantity,
+                image: item.image,
+              })
+              .select("*")
+              .single()
 
-          if (error) {
+            if (error) {
+              throw error
+            }
+
+            set((state) => ({
+              items: [...state.items, data as CartItem],
+              isLoading: false,
+            }))
+          } catch (error: any) {
             console.error("Error adding item to cart:", error)
+            toast.error("Failed to add item to cart", {
+              description: error.message,
+            })
             set({ isLoading: false })
-            return
           }
-
-          set((state) => ({
-            items: [...state.items, data as CartItem],
-            isLoading: false,
-          }))
         } else {
           // Add to local state only if user is not logged in
           set((state) => ({
@@ -80,15 +88,25 @@ export const useCartStore = create<CartStore>()(
 
       removeItem: async (productId) => {
         set({ isLoading: true })
-        const { user } = await supabase.auth.getUser()
-        const userId = user?.data?.user?.id
+        const user = useUserStore.getState().user
 
-        if (userId) {
-          // Remove from database if user is logged in
-          const { error } = await supabase.from("cart_items").delete().eq("user_id", userId).eq("product_id", productId)
+        if (user?.id) {
+          try {
+            // Remove from database if user is logged in
+            const { error } = await supabase
+              .from("cart_items")
+              .delete()
+              .eq("user_id", user.id)
+              .eq("product_id", productId)
 
-          if (error) {
+            if (error) {
+              throw error
+            }
+          } catch (error: any) {
             console.error("Error removing item from cart:", error)
+            toast.error("Failed to remove item from cart", {
+              description: error.message,
+            })
             set({ isLoading: false })
             return
           }
@@ -103,24 +121,30 @@ export const useCartStore = create<CartStore>()(
 
       updateQuantity: async (productId, quantity) => {
         set({ isLoading: true })
-        const { user } = await supabase.auth.getUser()
-        const userId = user?.data?.user?.id
+        const user = useUserStore.getState().user
 
         if (quantity <= 0) {
           await get().removeItem(productId)
           return
         }
 
-        if (userId) {
-          // Update in database if user is logged in
-          const { error } = await supabase
-            .from("cart_items")
-            .update({ quantity })
-            .eq("user_id", userId)
-            .eq("product_id", productId)
+        if (user?.id) {
+          try {
+            // Update in database if user is logged in
+            const { error } = await supabase
+              .from("cart_items")
+              .update({ quantity })
+              .eq("user_id", user.id)
+              .eq("product_id", productId)
 
-          if (error) {
+            if (error) {
+              throw error
+            }
+          } catch (error: any) {
             console.error("Error updating cart item quantity:", error)
+            toast.error("Failed to update quantity", {
+              description: error.message,
+            })
             set({ isLoading: false })
             return
           }
@@ -135,15 +159,21 @@ export const useCartStore = create<CartStore>()(
 
       clearCart: async () => {
         set({ isLoading: true })
-        const { user } = await supabase.auth.getUser()
-        const userId = user?.data?.user?.id
+        const user = useUserStore.getState().user
 
-        if (userId) {
-          // Clear from database if user is logged in
-          const { error } = await supabase.from("cart_items").delete().eq("user_id", userId)
+        if (user?.id) {
+          try {
+            // Clear from database if user is logged in
+            const { error } = await supabase.from("cart_items").delete().eq("user_id", user.id)
 
-          if (error) {
+            if (error) {
+              throw error
+            }
+          } catch (error: any) {
             console.error("Error clearing cart:", error)
+            toast.error("Failed to clear cart", {
+              description: error.message,
+            })
             set({ isLoading: false })
             return
           }
@@ -158,17 +188,23 @@ export const useCartStore = create<CartStore>()(
 
         set({ isLoading: true })
 
-        // Get cart items from database
-        const { data, error } = await supabase.from("cart_items").select("*").eq("user_id", userId)
+        try {
+          // Get cart items from database
+          const { data, error } = await supabase.from("cart_items").select("*").eq("user_id", userId)
 
-        if (error) {
+          if (error) {
+            throw error
+          }
+
+          // Update local state with items from database
+          set({ items: data as CartItem[], isLoading: false })
+        } catch (error: any) {
           console.error("Error fetching cart items:", error)
+          toast.error("Failed to sync cart", {
+            description: error.message,
+          })
           set({ isLoading: false })
-          return
         }
-
-        // Update local state with items from database
-        set({ items: data as CartItem[], isLoading: false })
       },
 
       getTotalItems: () => {

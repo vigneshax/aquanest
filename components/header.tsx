@@ -40,16 +40,16 @@ export default function Header() {
   }, [pathname])
 
   return (
-    <header
-      className={`sticky top-0 z-50 w-full transition-all duration-300 ${
-        isScrolled ? "bg-white/90 backdrop-blur-md shadow-sm" : "bg-transparent"
-      }`}
-    >
-      <div className="container mx-auto px-4 md:px-6">
-        <div className="flex h-16 items-center justify-between">
+    <header className={`sticky top-0 z-50 w-full transition-all duration-500 ${isScrolled ? "py-1" : "py-1"}`}>
+      <div className="container mx-auto px-4">
+      <div
+        className={`rounded-full transition-all duration-500 ${
+          isScrolled ? "bg-white/70 backdrop-blur-md shadow-md" : "bg-white/80 backdrop-blur-sm"
+        }`}
+      >
+        <div className="flex h-14 items-center justify-between px-6">
           <div className="flex items-center">
             <Link href="/" className="flex items-center space-x-2">
-              <Fish className="h-8 w-8 text-primary-500" />
               <span className="text-xl font-bold text-primary-700">AquaNest</span>
             </Link>
           </div>
@@ -153,6 +153,7 @@ export default function Header() {
           </div>
         </div>
       )}
+      </div>
     </header>
   )
 }
