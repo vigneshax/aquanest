@@ -1,14 +1,16 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ChevronLeft, Minus, Plus, ShoppingCart, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import type { Product } from "@/lib/use-products"
+import { useProducts } from "@/lib/use-products"
 import { useCartStore } from "@/lib/cart-store"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { toast } from "sonner"
+import ProductCard from "@/components/product-card"
 
 interface ProductDetailProps {
   product: Product
@@ -17,6 +19,29 @@ interface ProductDetailProps {
 export default function ProductDetail({ product }: ProductDetailProps) {
   const [quantity, setQuantity] = useState(1)
   const { addItem } = useCartStore()
+  const { data: allProducts, isLoading } = useProducts()
+  const [suggestedProducts, setSuggestedProducts] = useState<Product[]>([])
+
+  useEffect(() => {
+    if (allProducts && allProducts.length > 0) {
+      // Get products from the same category, excluding the current product
+      const sameCategoryProducts = allProducts.filter((p) => p.category === product.category && p.id !== product.id)
+
+      // If we have enough products in the same category, use those
+      if (sameCategoryProducts.length >= 4) {
+        setSuggestedProducts(sameCategoryProducts.slice(0, 4))
+      } else {
+        // Otherwise, add some random products from other categories
+        const otherProducts = allProducts.filter((p) => p.category !== product.category && p.id !== product.id)
+
+        const randomOtherProducts = [...otherProducts]
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4 - sameCategoryProducts.length)
+
+        setSuggestedProducts([...sameCategoryProducts, ...randomOtherProducts])
+      }
+    }
+  }, [allProducts, product])
 
   const handleAddToCart = async () => {
     await addItem({
@@ -49,6 +74,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             alt={product.name}
             fill
             className="object-cover"
+            priority
           />
           {product.tag && (
             <div className="absolute top-4 right-4 bg-primary-500 text-white text-sm font-bold px-3 py-1 rounded-full">
@@ -131,6 +157,27 @@ export default function ProductDetail({ product }: ProductDetailProps) {
             </TabsContent>
           </Tabs>
         </div>
+      </div>
+
+      {/* Suggested Products Section */}
+      <div className="mt-16">
+        <h2 className="text-2xl font-bold mb-6">You May Also Like</h2>
+
+        {isLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="rounded-lg bg-gray-100 animate-pulse h-[200px] sm:h-[300px]"></div>
+            ))}
+          </div>
+        ) : suggestedProducts.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-6">
+            {suggestedProducts.map((product) => (
+              <ProductCard key={product.id} product={product} variant="teal" />
+            ))}
+          </div>
+        ) : (
+          <p className="text-gray-500 text-center py-4">No suggested products available</p>
+        )}
       </div>
     </div>
   )

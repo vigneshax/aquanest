@@ -7,6 +7,7 @@ import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { Providers } from "@/components/providers"
 import { SonnerProvider } from "@/components/sonner-provider"
+import ChatWidget from "@/components/chat-widget"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -29,6 +30,7 @@ export default function RootLayout({
               <Header />
               <main className="flex-1">{children}</main>
               <Footer />
+              <ChatWidget />
             </div>
             <SonnerProvider />
           </Providers>

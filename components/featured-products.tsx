@@ -5,6 +5,7 @@ import ProductCard from "@/components/product-card"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
+import { Suspense } from "react"
 
 interface FeaturedProductsProps {
   category: string
@@ -12,6 +13,16 @@ interface FeaturedProductsProps {
   description: string
   variant?: "teal" | "orange" | "purple"
   limit?: number
+}
+
+function LoadingCards({ limit = 4 }: { limit?: number }) {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+      {Array.from({ length: limit }).map((_, i) => (
+        <div key={i} className="rounded-lg bg-gray-100 animate-pulse h-[200px] sm:h-[300px]"></div>
+      ))}
+    </div>
+  )
 }
 
 export default function FeaturedProducts({
@@ -40,27 +51,25 @@ export default function FeaturedProducts({
           </Button>
         </div>
 
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {Array.from({ length: limit }).map((_, i) => (
-              <div key={i} className="rounded-lg bg-gray-100 animate-pulse h-[300px]"></div>
-            ))}
-          </div>
-        ) : error ? (
-          <div className="text-center py-12">
-            <p className="text-red-500">Failed to load products</p>
-          </div>
-        ) : displayProducts.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-gray-500">No products found in this category</p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {displayProducts.map((product) => (
-              <ProductCard key={product.id} product={product} variant={variant} />
-            ))}
-          </div>
-        )}
+        <Suspense fallback={<LoadingCards limit={limit} />}>
+          {isLoading ? (
+            <LoadingCards limit={limit} />
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-red-500">Failed to load products</p>
+            </div>
+          ) : displayProducts.length === 0 ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">No products found in this category</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
+              {displayProducts.map((product) => (
+                <ProductCard key={product.id} product={product} variant={variant} />
+              ))}
+            </div>
+          )}
+        </Suspense>
       </div>
     </section>
   )
