@@ -1,16 +1,18 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { useRouter } from "next/navigation"
 import { useUserStore } from "@/lib/user-store"
 import { supabase } from "@/lib/supabase"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Loader2, Package, ArrowLeft, Truck, MapPin, Calendar, CreditCard } from "lucide-react"
+import { Loader2, Package, ArrowLeft, Truck, MapPin, Calendar, CreditCard, Clock } from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { format } from "date-fns"
 import { Separator } from "@/components/ui/separator"
+import { OrderTimeline } from "@/components/order-timeline"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 
 interface OrderItem {
   id: number
@@ -23,7 +25,7 @@ interface OrderItem {
 }
 
 interface Order {
-  id: number
+  id: string
   user_id: string
   address_id: number
   total: number
@@ -43,11 +45,21 @@ interface Order {
   items: OrderItem[]
 }
 
-export default function OrderDetailsPage({ params }: { params: { id: string } }) {
+type Params = {
+  id: string;
+};
+
+type PageProps = {
+  params: Promise<Params>;
+};
+
+export default function OrderDetailsPage({ params }: PageProps) {
+  const orderId = use(params).id;
   const { user } = useUserStore()
   const router = useRouter()
   const [order, setOrder] = useState<Order | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [activeTab, setActiveTab] = useState("details")
 
   useEffect(() => {
     if (!user) {
@@ -63,7 +75,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
         const { data: orderData, error: orderError } = await supabase
           .from("orders")
           .select("*")
-          .eq("id", params.id)
+          .eq("id", orderId)
           .eq("user_id", user.id)
           .single()
 
@@ -73,7 +85,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
         const { data: itemsData, error: itemsError } = await supabase
           .from("order_items")
           .select("*")
-          .eq("order_id", params.id)
+          .eq("order_id", orderId)
 
         if (itemsError) throw itemsError
 
@@ -103,7 +115,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
     }
 
     fetchOrderDetails()
-  }, [user, router, params.id])
+  }, [user, router, orderId])
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -127,7 +139,7 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
       case "shipped":
         return <Truck className="h-5 w-5" />
       case "processing":
-        return <Loader2 className="h-5 w-5" />
+        return <Clock className="h-5 w-5" />
       case "cancelled":
         return <Package className="h-5 w-5" />
       default:
@@ -175,131 +187,153 @@ export default function OrderDetailsPage({ params }: { params: { id: string } })
         </span>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 space-y-6">
-          {/* Order Items */}
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="mb-6">
+        <TabsList>
+          <TabsTrigger value="details">Order Details</TabsTrigger>
+          <TabsTrigger value="timeline">Order Timeline</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="details" className="mt-0">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              {/* Order Items */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Order Items</CardTitle>
+                  <CardDescription>Items included in your order</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {order.items.map((item) => (
+                      <div key={item.id} className="flex items-start space-x-4">
+                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border">
+                          <Image
+                            src={item.image || "/placeholder.svg?height=64&width=64"}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 className="text-sm font-medium">{item.name}</h4>
+                          <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
+                        </div>
+                        <p className="text-sm font-medium">₹{item.price.toFixed(2)}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              {/* Shipping Address */}
+              {order.address && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="flex items-center">
+                      <MapPin className="h-5 w-5 mr-2" />
+                      Shipping Address
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="font-medium">{order.address.name}</p>
+                    <p className="text-gray-600">
+                      {order.address.address_line1}
+                      {order.address.address_line2 && `, ${order.address.address_line2}`}
+                      <br />
+                      {order.address.city}, {order.address.state} {order.address.postal_code}
+                      <br />
+                      Phone: {order.address.phone}
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </div>
+
+            <div className="space-y-6">
+              {/* Order Summary */}
+              <Card>
+                <CardHeader>
+                  <CardTitle>Order Summary</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <Calendar className="h-4 w-4 mr-2 text-gray-500" />
+                      <span className="text-sm text-gray-600">Order Date</span>
+                    </div>
+                    <span className="text-sm">{format(new Date(order.created_at), "MMM d, yyyy")}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center">
+                      <CreditCard className="h-4 w-4 mr-2 text-gray-500" />
+                      <span className="text-sm text-gray-600">Payment Method</span>
+                    </div>
+                    <span className="text-sm capitalize">{order.payment_method}</span>
+                  </div>
+
+                  <Separator />
+
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Subtotal</span>
+                      <span>₹{(order.total / 1.18).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-600">Tax (18%)</span>
+                      <span>₹{(order.total - order.total / 1.18).toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between font-medium">
+                      <span>Total</span>
+                      <span>₹{order.total.toFixed(2)}</span>
+                    </div>
+                  </div>
+
+                  {order.notes && (
+                    <>
+                      <Separator />
+                      <div>
+                        <h4 className="text-sm font-medium mb-1">Order Notes</h4>
+                        <p className="text-sm text-gray-600">{order.notes}</p>
+                      </div>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+
+              {/* Actions */}
+              <Card>
+                <CardContent className="pt-6">
+                  <div className="space-y-2">
+                    <Button className="w-full" asChild>
+                      <Link href={`/orders/${order.id}/track`}>
+                        <Truck className="mr-2 h-4 w-4" />
+                        Track Order
+                      </Link>
+                    </Button>
+                    <Button variant="outline" className="w-full" asChild>
+                      <Link href="/contact">Contact Support</Link>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </TabsContent>
+
+        <TabsContent value="timeline" className="mt-0">
           <Card>
             <CardHeader>
-              <CardTitle>Order Items</CardTitle>
-              <CardDescription>Items included in your order</CardDescription>
+              <CardTitle>Order Timeline</CardTitle>
+              <CardDescription>Track the progress of your order</CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {order.items.map((item) => (
-                  <div key={item.id} className="flex items-start space-x-4">
-                    <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border">
-                      <Image
-                        src={item.image || "/placeholder.svg?height=64&width=64"}
-                        alt={item.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="text-sm font-medium">{item.name}</h4>
-                      <p className="text-sm text-gray-500">Qty: {item.quantity}</p>
-                    </div>
-                    <p className="text-sm font-medium">₹{item.price.toFixed(2)}</p>
-                  </div>
-                ))}
-              </div>
+              <OrderTimeline orderId={order.id} />
             </CardContent>
           </Card>
+        </TabsContent>
+      </Tabs>
 
-          {/* Shipping Address */}
-          {order.address && (
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center">
-                  <MapPin className="h-5 w-5 mr-2" />
-                  Shipping Address
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <p className="font-medium">{order.address.name}</p>
-                <p className="text-gray-600">
-                  {order.address.address_line1}
-                  {order.address.address_line2 && `, ${order.address.address_line2}`}
-                  <br />
-                  {order.address.city}, {order.address.state} {order.address.postal_code}
-                  <br />
-                  Phone: {order.address.phone}
-                </p>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        <div className="space-y-6">
-          {/* Order Summary */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Order Summary</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <Calendar className="h-4 w-4 mr-2 text-gray-500" />
-                  <span className="text-sm text-gray-600">Order Date</span>
-                </div>
-                <span className="text-sm">{format(new Date(order.created_at), "MMM d, yyyy")}</span>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="flex items-center">
-                  <CreditCard className="h-4 w-4 mr-2 text-gray-500" />
-                  <span className="text-sm text-gray-600">Payment Method</span>
-                </div>
-                <span className="text-sm capitalize">{order.payment_method}</span>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Subtotal</span>
-                  <span>₹{(order.total / 1.18).toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-gray-600">Tax (18%)</span>
-                  <span>₹{(order.total - order.total / 1.18).toFixed(2)}</span>
-                </div>
-                <div className="flex justify-between font-medium">
-                  <span>Total</span>
-                  <span>₹{order.total.toFixed(2)}</span>
-                </div>
-              </div>
-
-              {order.notes && (
-                <>
-                  <Separator />
-                  <div>
-                    <h4 className="text-sm font-medium mb-1">Order Notes</h4>
-                    <p className="text-sm text-gray-600">{order.notes}</p>
-                  </div>
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Actions */}
-          <Card>
-            <CardContent className="pt-6">
-              <div className="space-y-2">
-                <Button className="w-full" asChild>
-                  <Link href={`/orders/${order.id}/track`}>
-                    <Truck className="mr-2 h-4 w-4" />
-                    Track Order
-                  </Link>
-                </Button>
-                <Button variant="outline" className="w-full" asChild>
-                  <Link href="/contact">Contact Support</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
     </div>
   )
 }

@@ -138,6 +138,15 @@ export default function CheckoutPage() {
 
       if (itemsError) throw itemsError
 
+      // Add order timeline entry
+      const { error: timelineError } = await supabase.from("order_timeline").insert({
+        order_id: orderData.id,
+        status: "placed",
+        message: "Your order has been placed successfully and is awaiting processing.",
+      })
+
+      if (timelineError) throw timelineError
+
       // Create notification for the user
       await createNotification({
         user_id: user.id,
