@@ -1,16 +1,18 @@
-import { Suspense } from "react"
+import { Suspense, use } from "react"
 import { notFound } from "next/navigation"
 import ProductsGrid from "@/components/products-grid"
 import { Fish, Bird, Dog } from "lucide-react"
 
-interface CategoryPageProps {
-  params: {
-    category: string
-  }
-}
+type Params = {
+  id: string;
+};
 
-export default function CategoryPage({ params }: CategoryPageProps) {
-  const { category } = params
+type PageProps = {
+  params: Promise<Params>;
+};
+
+export default function CategoryPage({ params }: PageProps) {
+  const category = use(params).id
 
   // Validate category
   if (!["fish", "birds", "dogs"].includes(category)) {
