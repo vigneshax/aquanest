@@ -76,7 +76,7 @@ export default function ProductCard({ product, variant = "teal" }: ProductCardPr
         <div className="absolute bottom-0 left-0 right-0">
           <svg
             viewBox="0 0 1440 320"
-            className="w-full h-16"
+            className="w-full h-24"
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
           >
