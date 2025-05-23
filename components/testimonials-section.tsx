@@ -62,7 +62,7 @@ export default function TestimonialsSection() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">What Our Customers Say</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Don't just take our word for it. Here's what pet lovers have to say about their experience with AquaNest.
+            Don&apos;t just take our word for it. Here&apos;s what pet lovers have to say about their experience with AquaNest.
           </p>
         </div>
 

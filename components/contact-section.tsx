@@ -57,7 +57,7 @@ export default function ContactSection() {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Have questions or need assistance? We're here to help! Reach out to our team using the form below or contact
+            Have questions or need assistance? We&apos;re here to help! Reach out to our team using the form below or contact
             us directly.
           </p>
         </div>

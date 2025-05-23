@@ -126,7 +126,7 @@ export function NotificationsList({ userId, limit = 10, showAll = true }: Notifi
     return (
       <div className="text-center py-8">
         <Bell className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-        <p className="text-gray-500">You don't have any notifications yet.</p>
+        <p className="text-gray-500">You don&apos;t have any notifications yet.</p>
       </div>
     )
   }

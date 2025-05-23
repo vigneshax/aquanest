@@ -1,7 +1,6 @@
 import HeroSection from "@/components/hero-section"
 import CategoryCard from "@/components/category-card"
 import FeaturedProducts from "@/components/featured-products"
-import NewsletterSection from "@/components/newsletter-section"
 import TestimonialsSection from "@/components/testimonials-section"
 import AboutSection from "@/components/about-section"
 import ContactSection from "@/components/contact-section"
@@ -76,7 +75,7 @@ export default function Home() {
       <ContactSection />
 
       {/* Newsletter Section */}
-      <NewsletterSection />
+      {/* <NewsletterSection /> */}
     </div>
   )
 }

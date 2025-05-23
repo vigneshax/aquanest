@@ -46,6 +46,7 @@ export default function NotificationsPage() {
 
       toast.success("All notifications cleared")
       router.refresh()
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error clearing notifications:", error)
       toast.error("Failed to clear notifications", {

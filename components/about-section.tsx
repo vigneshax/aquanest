@@ -21,7 +21,7 @@ export default function AboutSection() {
             <h3 className="text-2xl font-bold mb-4">Our Story</h3>
             <p className="text-gray-700 mb-6">
               Founded in 2010, AquaNest began as a small aquarium shop with a passion for aquatic life. Over the years,
-              we've expanded our expertise to include birds and dogs, becoming a comprehensive pet care destination.
+              we&apos;ve expanded our expertise to include birds and dogs, becoming a comprehensive pet care destination.
             </p>
 
             <h4 className="text-xl font-semibold mb-3">Our Commitment</h4>

@@ -78,7 +78,7 @@ export function OrderTimeline({ orderId }: OrderTimelineProps) {
         {/* Vertical line connecting events */}
         <div className="absolute left-3.5 top-0 bottom-0 w-0.5 bg-gray-200" />
 
-        {events.map((event, index) => (
+        {events.map((event) => (
           <div key={event.id} className="relative flex items-start gap-4 pb-8 last:pb-0">
             <div className="absolute left-0 top-0 flex h-7 w-7 items-center justify-center rounded-full bg-white ring-1 ring-gray-200">
               {getStatusIcon(event.status)}

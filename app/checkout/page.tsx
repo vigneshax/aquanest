@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { toast } from "sonner"
-import { Loader2, Plus, CreditCard, Truck, ShoppingBag } from "lucide-react"
+import { Loader2, Plus, Truck, ShoppingBag } from "lucide-react"
 import Link from "next/link"
 import { AddressForm } from "@/components/address-form"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
@@ -164,6 +164,7 @@ export default function CheckoutPage() {
 
       // Redirect to order confirmation page
       router.push(`/orders/${orderData.id}`)
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error placing order:", error)
       toast.error("Failed to place order", {
@@ -232,7 +233,7 @@ export default function CheckoutPage() {
                   </div>
                 </RadioGroup>
               ) : (
-                <p className="text-gray-500">You don't have any saved addresses.</p>
+                <p className="text-gray-500">You don&apos;t have any saved addresses.</p>
               )}
             </CardContent>
             <CardFooter>

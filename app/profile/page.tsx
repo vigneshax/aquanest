@@ -156,6 +156,7 @@ export default function ProfilePage() {
 
       setAddresses((prev) => prev.filter((addr) => addr.id !== addressId))
       toast.success("Address deleted successfully")
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error deleting address:", error)
       toast.error("Failed to delete address", {
@@ -378,7 +379,7 @@ export default function ProfilePage() {
             <Card>
               <CardContent className="py-8 text-center">
                 <MapPin className="h-12 w-12 text-gray-300 mx-auto mb-4" />
-                <p className="text-gray-500 mb-4">You don't have any saved addresses yet.</p>
+                <p className="text-gray-500 mb-4">You don&apos;t have any saved addresses yet.</p>
                 <Button onClick={() => setIsAddingAddress(true)}>Add Your First Address</Button>
               </CardContent>
             </Card>
