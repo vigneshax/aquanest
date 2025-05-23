@@ -93,7 +93,7 @@ export default function ProductDetail({ product }: ProductDetailProps) {
                     <Star
                       key={i}
                       className={`h-5 w-5 ${
-                        i < Math.floor(product.rating) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
+                        i < Math.floor(product.rating ?? 0) ? "text-yellow-400 fill-yellow-400" : "text-gray-300"
                       }`}
                     />
                   ))}
