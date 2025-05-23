@@ -143,6 +143,7 @@ export function AddressForm({
 
         onAddressAdded?.(data)
       }
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Error saving address:", error)
       toast.error("Failed to save address", {
