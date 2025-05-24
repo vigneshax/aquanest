@@ -3,19 +3,19 @@ import { notFound } from "next/navigation"
 import ProductsGrid from "@/components/products-grid"
 import { Fish, Bird, Dog } from "lucide-react"
 
-type Params = {
-  category: string;
-};
+  type Params = {
+    category: string;
+  };
 
-type PageProps = {
-  params: Promise<Params>;
-};
+  type PageProps = {
+    params: Promise<Params>;
+  };
 
-export default async function CategoryPage({ params }: PageProps) {
-  const { category } = await params
-  console.log("Category:", category)
+  export default async function CategoryPage({ params }: PageProps) {
+    const { category } = await params
+    console.log("Category:", category)
 
-  // Validate category
+    // Validate category
   if (!["fish", "birds", "dogs"].includes(category)) {
     notFound()
   }

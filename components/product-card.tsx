@@ -76,16 +76,24 @@ export default function ProductCard({ product, variant = "teal" }: ProductCardPr
         <div className="absolute bottom-0 left-0 right-0">
           <svg
             viewBox="0 0 1440 320"
-            className="w-full h-24"
+            className="w-full h-24 group-hover:h-26 transition-all duration-500 ease-in-out"
             xmlns="http://www.w3.org/2000/svg"
             preserveAspectRatio="none"
           >
             <path
-              fill={variant === "teal" ? "#5eead4" : variant === "orange" ? "#fdba74" : "#c4b5fd"}
-              d="M0,160L48,144C96,128,192,96,288,96C384,96,480,128,576,154.7C672,181,768,203,864,197.3C960,192,1056,160,1152,144C1248,128,1344,128,1392,128L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
+              fill={
+                variant === "teal"
+                  ? "#5eead4"
+                  : variant === "orange"
+                    ? "#fdba74"
+                    : "#c4b5fd"
+              }
+              // fillOpacity="0.1"
+              d="M0,128L48,144C96,160,192,192,288,186.7C384,181,480,139,576,138.7C672,139,768,181,864,181.3C960,181,1056,139,1152,122.7C1248,107,1344,117,1392,122.7L1440,128L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
             ></path>
           </svg>
         </div>
+
 
         <div className="p-4 relative">
           <div className="flex items-center mb-2">
