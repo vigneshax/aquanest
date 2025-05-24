@@ -3,10 +3,12 @@ import { notFound } from "next/navigation"
 import ProductsGrid from "@/components/products-grid"
 import { Fish, Bird, Dog } from "lucide-react"
 
+type Params = {
+  category: string;
+};
+
 type PageProps = {
-  params: {
-    category: string;
-  };
+  params: Promise<Params>;
 };
 
 export default async function CategoryPage({ params }: PageProps) {
